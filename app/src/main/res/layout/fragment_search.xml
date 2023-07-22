@@ -55,7 +55,8 @@
                 android:inputType="text"
                 android:drawableLeft="@drawable/baseline_search_24"
                 android:padding="10dp"
-                android:textColorHint="@color/white" />
+                android:textColorHint="@color/white"
+                android:imeOptions="actionDone"/>
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
