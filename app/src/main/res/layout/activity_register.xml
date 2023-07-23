@@ -25,6 +25,13 @@
             android:textColor="#FFFFFF"
             android:textSize="40dp" />
         <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:textColorHint="@color/white"
+            android:hint="Your Name" />
+        <EditText
             android:id="@+id/editTextEmailRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
