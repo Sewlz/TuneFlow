@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/sôn gôcu/Desktop/db/NoteSteam.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="2432"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,8:mainCATEGORY"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="CATEGORY" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="134"/><column index="2" value="163"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">
+CREATE TABLE USER (
+    USER_ID INT IDENTITY(1,1),
+    Name VARCHAR(255),
+    USERNAME VARCHAR(255),
+    PASSWORD VARCHAR(255),
+    CREATEAT TIMESTAMP,
+	PRIMARY KEY(USER_ID)
+);
+CREATE TABLE MUSIC (
+    MUSIC_ID INT IDENTITY(1,1),
+    CATEGORY_ID INT,
+    TITLE VARCHAR(255),
+    LYRICS TEXT,
+    RELEASE_DATE DATE,
+    DURATION INT,
+    THUMBNAIL_URL VARCHAR(255),
+    MUSIC_URL VARCHAR(255),
+	PRIMARY KEY (MUSIC_ID),
+    FOREIGN KEY (CATEGORY_ID) REFERENCES CATEGORY(CATEGORY_ID)
+);
+CREATE TABLE CATEGORY (
+    CATEGORY_ID INT IDENTITY(1,1),
+    CATEGORY_NAME VARCHAR(255),
+	PRIMARY KEY (CATEGORY_ID)
+);
+CREATE TABLE PLAYLIST_MUSIC (
+    PLAYLIST_ID INT,
+    MUSIC_ID INT,
+    PRIMARY KEY (PLAYLIST_ID, MUSIC_ID),
+    FOREIGN KEY (PLAYLIST_ID) REFERENCES PLAYLIST(PLAYLIST_ID),
+    FOREIGN KEY (MUSIC_ID) REFERENCES MUSIC(MUSIC_ID)
+);
+CREATE TABLE PLAYLIST (
+    PLAYLIST_ID INT IDENTITY(1,1),
+    USER_ID INT,
+    PLAYLIST_NAME VARCHAR(255),
+	PRIMARY KEY(PLAYLIST_ID),
+    FOREIGN KEY (USER_ID) REFERENCES USER(USER_ID)
+);
+
+INSERT INTO USER (USER_ID, Name, USERNAME, PASSWORD, CREATEAT)
+VALUES (1,'John Doe', 'john_doe123', 'secretpassword', CURRENT_TIMESTAMP);
+SELECT * from USER
+INSERT INTO CATEGORY (CATEGORY_ID,CATEGORY_NAME)
+VALUES (1,'Pop');
+SELECT * from CATEGORY
+INSERT INTO MUSIC (MUSIC_ID,CATEGORY_ID, TITLE, LYRICS, RELEASE_DATE, DURATION, THUMBNAIL_URL, MUSIC_URL)
+VALUES (1,1, 'Song sample 1', 'Lyrics sample', '2023-07-24', 240, 'https://pic8.co/sh/6ziWGi.jpg', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'),
+ (2,1, 'Song sample 2', 'Lyrics sample', '2022-07-24', 240, 'https://pic8.co/sh/6ziWGi.jpg', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'),
+ (3,1, 'Song sample 3', 'Lyrics sample', '2023-06-24', 240, 'https://pic8.co/sh/6ziWGi.jpg', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'),
+ (4,1, 'Song sample 4', 'Lyrics sample', '2021-07-24', 240, 'https://pic8.co/sh/6ziWGi.jpg', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+
+INSERT INTO PLAYLIST (PLAYLIST_ID, USER_ID, PLAYLIST_NAME)
+VALUES (1, 1, 'My Favorite Songs');
+
+INSERT INTO PLAYLIST_MUSIC (PLAYLIST_ID, MUSIC_ID)
+VALUES (1, 1),
+(1, 2),
+(1, 3)</sql><current_tab id="0"/></tab_sql></sqlb_project>

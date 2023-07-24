@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gotham_bold"
                 android:padding="16dp"
-                android:text="Featured Playlists"
+                android:text="Featured Releases"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 

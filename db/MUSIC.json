@@ -1,0 +1,42 @@
+[
+    {
+        "CATEGORY_ID": 1,
+        "DURATION": 240,
+        "LYRICS": "Lyrics sample",
+        "MUSIC_ID": 1,
+        "MUSIC_URL": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "RELEASE_DATE": "2023-07-24",
+        "THUMBNAIL_URL": "https://pic8.co/sh/6ziWGi.jpg",
+        "TITLE": "Song sample 1"
+    },
+    {
+        "CATEGORY_ID": 1,
+        "DURATION": 240,
+        "LYRICS": "Lyrics sample",
+        "MUSIC_ID": 2,
+        "MUSIC_URL": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "RELEASE_DATE": "2022-07-24",
+        "THUMBNAIL_URL": "https://pic8.co/sh/6ziWGi.jpg",
+        "TITLE": "Song sample 2"
+    },
+    {
+        "CATEGORY_ID": 1,
+        "DURATION": 240,
+        "LYRICS": "Lyrics sample",
+        "MUSIC_ID": 3,
+        "MUSIC_URL": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "RELEASE_DATE": "2023-06-24",
+        "THUMBNAIL_URL": "https://pic8.co/sh/6ziWGi.jpg",
+        "TITLE": "Song sample 3"
+    },
+    {
+        "CATEGORY_ID": 1,
+        "DURATION": 240,
+        "LYRICS": "Lyrics sample",
+        "MUSIC_ID": 4,
+        "MUSIC_URL": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "RELEASE_DATE": "2021-07-24",
+        "THUMBNAIL_URL": "https://pic8.co/sh/6ziWGi.jpg",
+        "TITLE": "Song sample 4"
+    }
+]

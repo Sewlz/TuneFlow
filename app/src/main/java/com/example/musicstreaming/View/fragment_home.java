@@ -2,13 +2,33 @@ package com.example.musicstreaming.View;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.example.musicstreaming.Adapter.CustomHomeRecyclerView;
+import com.example.musicstreaming.Adapter.Music;
 import com.example.musicstreaming.R;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,4 +83,52 @@ public class fragment_home extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
+
+    //test recylerView
+    private RecyclerView recycler_featured_playlists;
+    private CustomHomeRecyclerView adapter;
+
+    private ArrayList<Music> musicArrayList;
+    FirebaseFirestore db;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        recycler_featured_playlists = (RecyclerView) view.findViewById(R.id.recycler_featured_playlists);
+        recycler_featured_playlists.setHasFixedSize(true);
+
+
+        db = FirebaseFirestore.getInstance();
+        // Set up the grid layout manager
+        int spanCount = 2;
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), spanCount);
+        recycler_featured_playlists.setLayoutManager(layoutManager);
+
+        // Create and set the adapter with sample data
+        //List<Music> musicItemList = getSampleData();
+        musicArrayList = new ArrayList<>();
+        adapter = new CustomHomeRecyclerView(getActivity(),musicArrayList);
+        recycler_featured_playlists.setAdapter(adapter);
+        EventChangeListener();
+    }
+
+private void EventChangeListener(){
+        db.collection("music")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error !=null){
+                            Log.e("FireBase error", error.getMessage());
+                            return;
+                        }
+                        for(DocumentChange dc: value.getDocumentChanges()){
+                            if(dc.getType() == DocumentChange.Type.ADDED){
+                                musicArrayList.add(dc.getDocument().toObject(Music.class));
+                            }
+                        }
+                        Log.d("testarraycker",musicArrayList.toString());
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+}
 }
