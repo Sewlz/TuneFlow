@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.musicstreaming.Model.Music;
 import com.example.musicstreaming.R;
 import com.bumptech.glide.Glide;
 

@@ -1,4 +1,4 @@
-package com.example.musicstreaming.Model;
+package com.example.musicstreaming.Control;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

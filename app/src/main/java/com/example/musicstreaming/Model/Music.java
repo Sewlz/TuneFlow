@@ -1,4 +1,4 @@
-package com.example.musicstreaming.Adapter;
+package com.example.musicstreaming.Model;
 public class Music {
     public Music(int CATEGORY_ID, int DURATION, String LYRICS, int MUSIC_ID, String MUSIC_URL, String RELEASE_DATE, String THUMBNAIL_URL, String TITLE) {
         this.CATEGORY_ID = CATEGORY_ID;
