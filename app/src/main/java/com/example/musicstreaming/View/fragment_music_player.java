@@ -7,12 +7,25 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.musicstreaming.Model.Music;
 import com.example.musicstreaming.R;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.bumptech.glide.Glide;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,19 +73,69 @@ public class fragment_music_player extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
+    private Integer positon;
+    ImageButton btn_play_pause;
+    TextView text_music_title,text_music_artist;
+    ImageView image_music_thumbnail;
+    private boolean paused = true;
+    private List<Music> musicArrayList;
+    FirebaseFirestore db;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_music_player, container, false);
+        View view = inflater.inflate(R.layout.fragment_music_player, container, false);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            positon = arguments.getInt("Positon");
+        }
+        return view;
     }
-    ImageButton btn_play_pause;
-    private boolean paused = true;
+    private void EventChangeListener(){
+        db.collection("music")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error !=null){
+                            Log.e("FireBase error", error.getMessage());
+                            return;
+                        }
+                        for(DocumentChange dc: value.getDocumentChanges()){
+                            if(dc.getType() == DocumentChange.Type.ADDED){
+                                musicArrayList.add(dc.getDocument().toObject(Music.class));
+                            }
+                        }
+                        Log.d("testMusicArray",musicArrayList.toString());
+                        if (!musicArrayList.isEmpty()) {
+                            Music musicItem = musicArrayList.get(positon);
+                            updateUI(musicItem);
+                        }
+                    }
+                });
+    }
+    private void updateUI(Music musicItem) {
+        // ... update the UI with the musicItem ...//
+        text_music_title.setText(musicItem.getTITLE());
+        text_music_artist.setText(musicItem.getARTIST());
+        Glide.with(getActivity())
+                .load(musicItem.getTHUMBNAIL_URL()) // Assuming you have an 'imageUrl' field in your Music class
+                .into(image_music_thumbnail);
+    }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        db = FirebaseFirestore.getInstance();
+
         btn_play_pause = (ImageButton) view.findViewById(R.id.btn_play_pause);
+        text_music_title = (TextView) view.findViewById(R.id.text_music_title);
+        text_music_artist = (TextView) view.findViewById(R.id.text_music_artist);
+        image_music_thumbnail = (ImageView) view.findViewById(R.id.image_music_thumbnail);
+        
+        musicArrayList = new ArrayList<>();
+        EventChangeListener();
+        addEvent();
+    }
+    private void addEvent(){
         btn_play_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,5 +152,4 @@ public class fragment_music_player extends Fragment {
             }
         });
     }
-
 }

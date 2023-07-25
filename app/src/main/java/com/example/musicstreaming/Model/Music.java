@@ -1,6 +1,6 @@
 package com.example.musicstreaming.Model;
 public class Music {
-    public Music(int CATEGORY_ID, int DURATION, String LYRICS, int MUSIC_ID, String MUSIC_URL, String RELEASE_DATE, String THUMBNAIL_URL, String TITLE) {
+    public Music(int CATEGORY_ID, int DURATION, String LYRICS, int MUSIC_ID, String MUSIC_URL, String RELEASE_DATE, String THUMBNAIL_URL, String TITLE, String ARTIST) {
         this.CATEGORY_ID = CATEGORY_ID;
         this.DURATION = DURATION;
         this.LYRICS = LYRICS;
@@ -9,6 +9,7 @@ public class Music {
         this.RELEASE_DATE = RELEASE_DATE;
         this.THUMBNAIL_URL = THUMBNAIL_URL;
         this.TITLE = TITLE;
+        this.ARTIST = ARTIST;
     }
 
     public int getCATEGORY_ID() {
@@ -84,6 +85,15 @@ public class Music {
     private String THUMBNAIL_URL;
     private String TITLE;
 
+    public String getARTIST() {
+        return ARTIST;
+    }
+
+    public void setARTIST(String ARTIST) {
+        this.ARTIST = ARTIST;
+    }
+
+    private String ARTIST;
     public Music() {
         // Required empty constructor for Firebase
     }

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,9 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 import com.example.musicstreaming.Adapter.CustomHomeRecyclerView;
+import com.example.musicstreaming.Adapter.RecyclerInterface;
 import com.example.musicstreaming.Model.Music;
 import com.example.musicstreaming.R;
 import com.google.firebase.firestore.DocumentChange;
@@ -28,7 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
  * Use the {@link fragment_home#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class fragment_home extends Fragment {
+public class fragment_home extends Fragment implements RecyclerInterface {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -100,11 +105,18 @@ public class fragment_home extends Fragment {
         // Create and set the adapter with sample data
         //List<Music> musicItemList = getSampleData();
         musicArrayList = new ArrayList<>();
-        adapter = new CustomHomeRecyclerView(getActivity(),musicArrayList);
+        adapter = new CustomHomeRecyclerView(getActivity(),musicArrayList, this);
         recycler_featured_playlists.setAdapter(adapter);
         EventChangeListener();
     }
+    @Override
+    public void onClick(int position) {
+        Music musicItem = musicArrayList.get(position);
+        sendDataToDestinationFragment(position);
+        Toast.makeText(getActivity(), "Test Item"+position, Toast.LENGTH_SHORT).show();
 
+
+    }
 private void EventChangeListener(){
         db.collection("music")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -124,4 +136,23 @@ private void EventChangeListener(){
                     }
                 });
 }
+    private void sendDataToDestinationFragment(Integer positon) {
+        // Create a new instance of the destination fragment
+        fragment_music_player destinationFragment = new fragment_music_player();
+
+        // Create a Bundle to pass the data
+        Bundle bundle = new Bundle();
+        bundle.putInt("Positon", positon); // Replace "KEY_DATA" with your desired key
+
+        // Set the arguments to the destination fragment
+        destinationFragment.setArguments(bundle);
+
+        // Replace the current fragment with the destination fragment
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameMain, destinationFragment);
+        fragmentTransaction.addToBackStack(null); // Optional: Add to back stack if you want to navigate back
+        fragmentTransaction.commit();
+    }
+
 }
