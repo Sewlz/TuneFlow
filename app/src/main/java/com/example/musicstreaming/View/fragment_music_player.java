@@ -1,18 +1,20 @@
 package com.example.musicstreaming.View;
 
+import android.media.AudioAttributes;
 import android.os.Bundle;
-
+import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.bumptech.glide.Glide;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,12 +78,29 @@ public class fragment_music_player extends Fragment {
         }
     }
     private Integer positon;
-    ImageButton btn_play_pause;
+    ImageButton btn_play_pause, btn_next, btn_previous;
     TextView text_music_title,text_music_artist;
     ImageView image_music_thumbnail;
     private boolean paused = true;
     private List<Music> musicArrayList;
     FirebaseFirestore db;
+    private MediaPlayer mediaPlayer;
+    private SeekBar music_progress_bar;
+    private Handler handler = new Handler();
+    private String music_url;
+    private Runnable updateSeekBar = new Runnable() {
+        @Override
+        public void run() {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                int currentPosition = mediaPlayer.getCurrentPosition();
+                int totalDuration = mediaPlayer.getDuration();
+                music_progress_bar.setProgress((currentPosition * 100) / totalDuration);
+
+                // Schedule the update every 1 second
+                handler.postDelayed(this, 1000);
+            }
+        }
+    };
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,6 +121,8 @@ public class fragment_music_player extends Fragment {
                             Log.e("FireBase error", error.getMessage());
                             return;
                         }
+                        // Clear the list before adding new items
+                        musicArrayList.clear();
                         for(DocumentChange dc: value.getDocumentChanges()){
                             if(dc.getType() == DocumentChange.Type.ADDED){
                                 musicArrayList.add(dc.getDocument().toObject(Music.class));
@@ -120,6 +143,7 @@ public class fragment_music_player extends Fragment {
         Glide.with(getActivity())
                 .load(musicItem.getTHUMBNAIL_URL()) // Assuming you have an 'imageUrl' field in your Music class
                 .into(image_music_thumbnail);
+        music_url = musicItem.getMUSIC_URL();
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -130,26 +154,161 @@ public class fragment_music_player extends Fragment {
         text_music_title = (TextView) view.findViewById(R.id.text_music_title);
         text_music_artist = (TextView) view.findViewById(R.id.text_music_artist);
         image_music_thumbnail = (ImageView) view.findViewById(R.id.image_music_thumbnail);
-        
+        music_progress_bar = (SeekBar) view.findViewById(R.id.music_progress_bar);
+        btn_next = (ImageButton) view.findViewById(R.id.btn_next);
+        btn_previous = (ImageButton) view.findViewById(R.id.btn_previous);
+
         musicArrayList = new ArrayList<>();
         EventChangeListener();
         addEvent();
     }
     private void addEvent(){
+        btn_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (positon + 1 < musicArrayList.size()) {
+                    positon++;
+
+                    stopAudio();
+                    music_progress_bar.setProgress(0);
+
+                    Music musicItem = musicArrayList.get(positon);
+                    updateUI(musicItem);
+
+                    int icon = R.drawable.baseline_play_arrow_24;
+                    btn_play_pause.setImageDrawable(ContextCompat.getDrawable(getActivity(), icon));
+                }
+                else {
+                    Toast.makeText(getActivity(), "No more songs", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        btn_previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (positon - 1 >= 0) {
+                    positon--;
+
+                    stopAudio();
+                    music_progress_bar.setProgress(0);
+
+                    Music musicItem = musicArrayList.get(positon);
+                    updateUI(musicItem);
+
+                    int icon = R.drawable.baseline_play_arrow_24;
+                    btn_play_pause.setImageDrawable(ContextCompat.getDrawable(getActivity(), icon));
+                }
+                else {
+                    Toast.makeText(getActivity(), "No more songs", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         btn_play_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int icon;
                 if (paused) {
                     paused = false;
+                    playAudio(music_url);
                     icon = R.drawable.baseline_pause_24;
                 }
                 else {
                     paused = true;
+                    pauseAudio();
                     icon = R.drawable.baseline_play_arrow_24;
                 }
                 btn_play_pause.setImageDrawable(ContextCompat.getDrawable(getActivity(), icon));
             }
         });
+        // Set up MediaPlayer
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .build());
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                // Start playing audio when prepared
+                mediaPlayer.start();
+                paused = false;
+            }
+        });
+        music_progress_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Update audio playback position when the SeekBar is changed by the user
+                if (fromUser && mediaPlayer != null) {
+                    int newPosition = (mediaPlayer.getDuration() * progress) / 100;
+                    mediaPlayer.seekTo(newPosition);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Remove seek bar update callbacks while the user is interacting with the SeekBar
+                handler.removeCallbacks(updateSeekBar);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Add seek bar update callbacks when the user stops interacting with the SeekBar
+                handler.post(updateSeekBar);
+            }
+        });
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                // Reset the seek bar to 0 when the media playback completes
+                music_progress_bar.setProgress(0);
+                int icon = R.drawable.baseline_play_arrow_24;
+                btn_play_pause.setImageDrawable(ContextCompat.getDrawable(getActivity(), icon));
+            }
+        });
+    }
+
+    private void playAudio(String url) {
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.prepareAsync(); // Prepare the MediaPlayer asynchronously
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void pauseAudio() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            paused = true;
+        }
+    }
+
+    private void stopAudio() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+            paused = true;
+        }
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Release resources when the fragment is destroyed
+        mediaPlayer.release();
+        mediaPlayer = null;
+        handler.removeCallbacksAndMessages(null);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Resume seek bar updates when the fragment is resumed
+        handler.postDelayed(updateSeekBar, 1000);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Remove seek bar update callbacks when the fragment is paused
+        handler.removeCallbacks(updateSeekBar);
     }
 }
