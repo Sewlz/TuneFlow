@@ -117,7 +117,7 @@ public class fragment_home extends Fragment implements RecyclerInterface {
 
 
     }
-private void EventChangeListener(){
+    private void EventChangeListener(){
         db.collection("music")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -135,7 +135,7 @@ private void EventChangeListener(){
                         adapter.notifyDataSetChanged();
                     }
                 });
-}
+    }
     private void sendDataToDestinationFragment(Integer positon) {
         // Create a new instance of the destination fragment
         fragment_music_player destinationFragment = new fragment_music_player();

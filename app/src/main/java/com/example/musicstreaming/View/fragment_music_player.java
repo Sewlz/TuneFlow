@@ -50,7 +50,6 @@ public class fragment_music_player extends Fragment {
     public fragment_music_player() {
         // Required empty public constructor
     }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
