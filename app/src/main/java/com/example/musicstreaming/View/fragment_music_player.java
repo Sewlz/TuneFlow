@@ -140,7 +140,7 @@ public class fragment_music_player extends Fragment {
         text_music_title.setText(musicItem.getTITLE());
         text_music_artist.setText(musicItem.getARTIST());
         Glide.with(getActivity())
-                .load(musicItem.getTHUMBNAIL_URL()) // Assuming you have an 'imageUrl' field in your Music class
+                .load(musicItem.getTHUMBNAIL_URL())
                 .into(image_music_thumbnail);
         music_url = musicItem.getMUSIC_URL();
     }
@@ -229,6 +229,7 @@ public class fragment_music_player extends Fragment {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 // Start playing audio when prepared
+                handler.post(updateSeekBar);
                 mediaPlayer.start();
                 paused = false;
             }
