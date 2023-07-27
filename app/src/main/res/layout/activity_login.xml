@@ -27,18 +27,20 @@
             android:textSize="40dp" />
 
         <EditText
-            android:id="@+id/editTextEmailLogin"
+            android:id="@+id/edtUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
+            android:textColor="@color/white"
             android:hint="UserName"
             android:textColorHint="@color/white" />
 
         <EditText
-            android:id="@+id/editTextPasswordLogin"
+            android:id="@+id/edtPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
+            android:textColor="@color/white"
             android:inputType="textPassword"
             android:backgroundTint="@color/white"
             android:textColorHint="@color/white" />

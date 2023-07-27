@@ -5,7 +5,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,19 +20,36 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.musicstreaming.Adapter.CustomHomeRecyclerView;
+import com.example.musicstreaming.Adapter.RecyclerInterface;
+import com.example.musicstreaming.Model.Music;
 import com.example.musicstreaming.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link fragment_search#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class fragment_search extends Fragment {
+public class fragment_search extends Fragment implements RecyclerInterface {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    RecyclerView recycler_search;
+    EditText search_edt;
+    FirebaseFirestore db= FirebaseFirestore.getInstance();
+    ArrayList<Music> musicArrayList = new ArrayList<>();
+    private CustomHomeRecyclerView adapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -74,11 +96,21 @@ public class fragment_search extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        EditText search_edt = (EditText) view.findViewById(R.id.search_edt);
+        search_edt = (EditText) view.findViewById(R.id.search_edt);
+        recycler_search = (RecyclerView) view.findViewById(R.id.recycler_search);
+        recycler_search.setHasFixedSize(true);
+
+        int spanCount = 2;
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), spanCount);
+        recycler_search.setLayoutManager(layoutManager);
+
+        adapter = new CustomHomeRecyclerView(getActivity(),musicArrayList, this);
+        recycler_search.setAdapter(adapter);
         search_edt.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    search(search_edt.getText().toString());
                     Toast.makeText(getActivity(), "TEST SUBMIT", Toast.LENGTH_SHORT).show();
                     return true;
                 }
@@ -86,4 +118,67 @@ public class fragment_search extends Fragment {
             }
         });
     }
+private void search(String inputSearch) {
+    CollectionReference searchRef = db.collection("music");
+    musicArrayList.clear();
+
+    searchRef.whereEqualTo("TITLE", inputSearch)
+            .get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot dc : task.getResult()) {
+                            musicArrayList.add(dc.toObject(Music.class));
+                        }
+                        // After adding the results of the first query, perform the second query
+                        searchByArtist(inputSearch);
+                    } else {}
+                }
+            });
+}
+
+    private void searchByArtist(String inputSearch) {
+        CollectionReference searchRef = db.collection("music");
+
+        // Query for documents where "ARTIST" contains the input search
+        searchRef.whereEqualTo("ARTIST", inputSearch)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot dc : task.getResult()) {
+                                musicArrayList.add(dc.toObject(Music.class));
+                            }
+                            adapter.notifyDataSetChanged(); // Notify the adapter that the data has changed
+                        } else {}
+                    }
+                });
+    }
+
+    @Override
+    public void onClick(int position) {
+        sendDataToDestinationFragment(position);
+        Toast.makeText(getActivity(), "Test Item"+position, Toast.LENGTH_SHORT).show();
+    }
+    private void sendDataToDestinationFragment(Integer positon) {
+        // Create a new instance of the destination fragment
+        fragment_music_player destinationFragment = new fragment_music_player();
+
+        // Create a Bundle to pass the data
+        Bundle bundle = new Bundle();
+        bundle.putInt("Positon", positon); // Replace "KEY_DATA" with your desired key
+
+        // Set the arguments to the destination fragment
+        destinationFragment.setArguments(bundle);
+
+        // Replace the current fragment with the destination fragment
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameMain, destinationFragment);
+        fragmentTransaction.addToBackStack(null); // Optional: Add to back stack if you want to navigate back
+        fragmentTransaction.commit();
+    }
+
 }

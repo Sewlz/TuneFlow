@@ -21,8 +21,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Integer userId = getIntent().getIntExtra("USER_ID",0);
         setContentView(R.layout.activity_main);
-        FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(this);//init firebase
         loadFragment(new fragment_home());
         frameMain = (FrameLayout) findViewById(R.id.frameMain);
         bottomNavMain = (BottomNavigationView) findViewById(R.id.bottomNavMain);

@@ -29,6 +29,7 @@ public class CustomHomeRecyclerView extends RecyclerView.Adapter<CustomHomeRecyc
         this.musicItemList = musicItemList;
         this.recyclerInterface = recyclerInterface;
     }
+
     @NonNull
     @Override
     public MusicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -41,9 +42,8 @@ public class CustomHomeRecyclerView extends RecyclerView.Adapter<CustomHomeRecyc
         Music musicItem = musicItemList.get(position);
         // Load and display the image using Glide
         Glide.with(holder.itemView.getContext())
-                .load(musicItem.getTHUMBNAIL_URL()) // Assuming you have an 'imageUrl' field in your Music class
+                .load(musicItem.getTHUMBNAIL_URL())
                 .into(holder.musicImageView);
-//        holder.musicImageView.setImageResource(musicItem.getImageResource());
         holder.musicNameTextView.setText(musicItem.getTITLE());
     }
 
@@ -60,6 +60,7 @@ public class CustomHomeRecyclerView extends RecyclerView.Adapter<CustomHomeRecyc
             super(itemView);
             musicImageView = itemView.findViewById(R.id.musicImageView);
             musicNameTextView = itemView.findViewById(R.id.musicNameTextView);
+            //onclick for recyleView
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

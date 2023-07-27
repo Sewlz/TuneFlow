@@ -82,12 +82,13 @@ public class fragment_home extends Fragment implements RecyclerInterface {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    //test recylerView
+    //khai bao bien
     private RecyclerView recycler_featured_playlists;
     private CustomHomeRecyclerView adapter;
 
     private ArrayList<Music> musicArrayList;
-    FirebaseFirestore db;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();;
+    //on created
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -95,28 +96,17 @@ public class fragment_home extends Fragment implements RecyclerInterface {
         recycler_featured_playlists = (RecyclerView) view.findViewById(R.id.recycler_featured_playlists);
         recycler_featured_playlists.setHasFixedSize(true);
 
-
-        db = FirebaseFirestore.getInstance();
         // Set up the grid layout manager
         int spanCount = 2;
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), spanCount);
         recycler_featured_playlists.setLayoutManager(layoutManager);
 
-        // Create and set the adapter with sample data
-        //List<Music> musicItemList = getSampleData();
         musicArrayList = new ArrayList<>();
         adapter = new CustomHomeRecyclerView(getActivity(),musicArrayList, this);
         recycler_featured_playlists.setAdapter(adapter);
         EventChangeListener();
     }
-    @Override
-    public void onClick(int position) {
-        Music musicItem = musicArrayList.get(position);
-        sendDataToDestinationFragment(position);
-        Toast.makeText(getActivity(), "Test Item"+position, Toast.LENGTH_SHORT).show();
-
-
-    }
+    //load firestore data to array
     private void EventChangeListener(){
         db.collection("music")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -136,6 +126,13 @@ public class fragment_home extends Fragment implements RecyclerInterface {
                     }
                 });
     }
+    //on recyler itemclick (interface)
+    @Override
+    public void onClick(int position) {
+        sendDataToDestinationFragment(position);
+        Toast.makeText(getActivity(), "Test Item"+position, Toast.LENGTH_SHORT).show();
+    }
+    //send data to another fragment
     private void sendDataToDestinationFragment(Integer positon) {
         // Create a new instance of the destination fragment
         fragment_music_player destinationFragment = new fragment_music_player();
