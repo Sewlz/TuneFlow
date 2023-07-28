@@ -143,7 +143,7 @@ public class fragment_home extends Fragment implements RecyclerInterface {
 
         // Set the arguments to the destination fragment
         destinationFragment.setArguments(bundle);
-
+        bundle.putParcelableArrayList("MusicList", musicArrayList);
         // Replace the current fragment with the destination fragment
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

@@ -1,5 +1,9 @@
 package com.example.musicstreaming.Model;
-public class Music {
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Music implements Parcelable{
     public Music(int CATEGORY_ID, int DURATION, String LYRICS, int MUSIC_ID, String MUSIC_URL, String RELEASE_DATE, String THUMBNAIL_URL, String TITLE, String ARTIST) {
         this.CATEGORY_ID = CATEGORY_ID;
         this.DURATION = DURATION;
@@ -97,8 +101,6 @@ public class Music {
     public Music() {
         // Required empty constructor for Firebase
     }
-
-
     @Override
     public String toString() {
         return "Music{" +
@@ -111,5 +113,43 @@ public class Music {
                 ", thumbnailUrl='" + THUMBNAIL_URL + '\'' +
                 ", title='" + TITLE + '\'' +
                 '}';
+    }
+    protected Music(Parcel in) {
+        CATEGORY_ID = in.readInt();
+        DURATION = in.readInt();
+        LYRICS = in.readString();
+        MUSIC_ID = in.readInt();
+        MUSIC_URL = in.readString();
+        RELEASE_DATE = in.readString();
+        THUMBNAIL_URL = in.readString();
+        TITLE = in.readString();
+    }
+
+    // Parcelable.Creator for creating instances of City from a Parcel
+    public static final Parcelable.Creator<Music> CREATOR = new Parcelable.Creator<Music>() {
+        @Override
+        public Music createFromParcel(Parcel in) {
+            return new Music(in);
+        }
+
+        @Override
+        public Music[] newArray(int size) {
+            return new Music[size];
+        }
+    };
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(CATEGORY_ID);
+        dest.writeInt(DURATION);
+        dest.writeString(LYRICS);
+        dest.writeInt(MUSIC_ID);
+        dest.writeString(MUSIC_URL);
+        dest.writeString(RELEASE_DATE);
+        dest.writeString(THUMBNAIL_URL);
+        dest.writeString(TITLE);
     }
 }

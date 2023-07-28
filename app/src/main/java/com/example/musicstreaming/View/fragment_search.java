@@ -112,6 +112,7 @@ public class fragment_search extends Fragment implements RecyclerInterface {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     search(search_edt.getText().toString());
                     Toast.makeText(getActivity(), "TEST SUBMIT", Toast.LENGTH_SHORT).show();
+                    Log.d("TAG", "onComplete: "+musicArrayList.toString());
                     return true;
                 }
                 return false;
@@ -131,17 +132,16 @@ private void search(String inputSearch) {
                         for (DocumentSnapshot dc : task.getResult()) {
                             musicArrayList.add(dc.toObject(Music.class));
                         }
-                        // After adding the results of the first query, perform the second query
                         searchByArtist(inputSearch);
-                    } else {}
+                    } else {
+                        // Handle the failure case here, if needed
+                    }
                 }
             });
 }
 
     private void searchByArtist(String inputSearch) {
         CollectionReference searchRef = db.collection("music");
-
-        // Query for documents where "ARTIST" contains the input search
         searchRef.whereEqualTo("ARTIST", inputSearch)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -151,13 +151,14 @@ private void search(String inputSearch) {
                             for (DocumentSnapshot dc : task.getResult()) {
                                 musicArrayList.add(dc.toObject(Music.class));
                             }
-                            adapter.notifyDataSetChanged(); // Notify the adapter that the data has changed
-                        } else {}
+                            adapter.notifyDataSetChanged();
+                        } else {
+                        }
                     }
                 });
     }
 
-    @Override
+    @Override//problem get position 0 so always get the wrong song because playsong has array full song to fix this issuse intent sent the array
     public void onClick(int position) {
         sendDataToDestinationFragment(position);
         Toast.makeText(getActivity(), "Test Item"+position, Toast.LENGTH_SHORT).show();
@@ -169,7 +170,7 @@ private void search(String inputSearch) {
         // Create a Bundle to pass the data
         Bundle bundle = new Bundle();
         bundle.putInt("Positon", positon); // Replace "KEY_DATA" with your desired key
-
+        bundle.putParcelableArrayList("MusicList", musicArrayList);
         // Set the arguments to the destination fragment
         destinationFragment.setArguments(bundle);
 

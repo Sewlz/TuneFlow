@@ -81,7 +81,8 @@ public class fragment_music_player extends Fragment {
     TextView text_music_title,text_music_artist;
     ImageView image_music_thumbnail;
     private boolean paused = true;
-    private List<Music> musicArrayList;
+//    private List<Music> musicArrayList;
+    ArrayList<Music> arrayList = new ArrayList<>();
     FirebaseFirestore db;
     private MediaPlayer mediaPlayer;
     private SeekBar music_progress_bar;
@@ -108,32 +109,9 @@ public class fragment_music_player extends Fragment {
         Bundle arguments = getArguments();
         if (arguments != null) {
             positon = arguments.getInt("Positon");
+            arrayList = arguments.getParcelableArrayList("MusicList");
         }
         return view;
-    }
-    private void EventChangeListener(){
-        db.collection("music")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(error !=null){
-                            Log.e("FireBase error", error.getMessage());
-                            return;
-                        }
-                        // Clear the list before adding new items
-                        musicArrayList.clear();
-                        for(DocumentChange dc: value.getDocumentChanges()){
-                            if(dc.getType() == DocumentChange.Type.ADDED){
-                                musicArrayList.add(dc.getDocument().toObject(Music.class));
-                            }
-                        }
-                        Log.d("testMusicArray",musicArrayList.toString());
-                        if (!musicArrayList.isEmpty()) {
-                            Music musicItem = musicArrayList.get(positon);
-                            updateUI(musicItem);
-                        }
-                    }
-                });
     }
     private void updateUI(Music musicItem) {
         // ... update the UI with the musicItem ...//
@@ -157,21 +135,25 @@ public class fragment_music_player extends Fragment {
         btn_next = (ImageButton) view.findViewById(R.id.btn_next);
         btn_previous = (ImageButton) view.findViewById(R.id.btn_previous);
 
-        musicArrayList = new ArrayList<>();
-        EventChangeListener();
+//        arrayList = new ArrayList<>();
+        if (!arrayList.isEmpty()) {
+            Music musicItem = arrayList.get(positon);
+            updateUI(musicItem);
+        }
         addEvent();
+        Log.d("testMusicArray",arrayList.toString());
     }
     private void addEvent(){
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (positon + 1 < musicArrayList.size()) {
+                if (positon + 1 < arrayList.size()) {
                     positon++;
 
                     stopAudio();
                     music_progress_bar.setProgress(0);
 
-                    Music musicItem = musicArrayList.get(positon);
+                    Music musicItem = arrayList.get(positon);
                     updateUI(musicItem);
 
                     int icon = R.drawable.baseline_play_arrow_24;
@@ -191,7 +173,7 @@ public class fragment_music_player extends Fragment {
                     stopAudio();
                     music_progress_bar.setProgress(0);
 
-                    Music musicItem = musicArrayList.get(positon);
+                    Music musicItem = arrayList.get(positon);
                     updateUI(musicItem);
 
                     int icon = R.drawable.baseline_play_arrow_24;
