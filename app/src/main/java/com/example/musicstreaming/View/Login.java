@@ -33,7 +33,7 @@ public class Login extends AppCompatActivity {
     Button buttonLogin;
     TextView textViewRegister;
     EditText edtUserName, edtPass;
-    Integer user_id;
+    String user_name;
     ArrayList<User> userArrayList = new ArrayList<>();
     FirebaseFirestore db= FirebaseFirestore.getInstance();
     @Override
@@ -80,9 +80,9 @@ public class Login extends AppCompatActivity {
                             for (DocumentSnapshot documentSnapshot : task.getResult()) {
                                 userArrayList.add(documentSnapshot.toObject(User.class));
                                 User userItem = userArrayList.get(0);
-                                user_id = userItem.getUSER_ID();
+                                user_name = userItem.getUSERNAME();
                                 Intent intent = new Intent(Login.this, MainActivity.class);
-                                intent.putExtra("USER_ID",user_id);
+                                intent.putExtra("USERNAME",user_name);
                                 startActivity(intent);
                             }
                         } else {

@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.example.musicstreaming.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -18,11 +19,13 @@ import com.google.firebase.FirebaseApp;
 public class MainActivity extends AppCompatActivity {
     FrameLayout frameMain;
     BottomNavigationView bottomNavMain;
+    public String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Integer userId = getIntent().getIntExtra("USER_ID",0);
+        username = getIntent().getStringExtra("USERNAME");
         setContentView(R.layout.activity_main);
+        Toast.makeText(this, "Hi! "+username, Toast.LENGTH_SHORT).show();
         FirebaseApp.initializeApp(this);//init firebase
         loadFragment(new fragment_home());
         frameMain = (FrameLayout) findViewById(R.id.frameMain);

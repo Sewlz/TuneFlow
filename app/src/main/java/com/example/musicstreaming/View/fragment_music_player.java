@@ -88,6 +88,7 @@ public class fragment_music_player extends Fragment {
     private SeekBar music_progress_bar;
     private Handler handler = new Handler();
     private String music_url;
+    String username;
     private Runnable updateSeekBar = new Runnable() {
         @Override
         public void run() {
@@ -104,6 +105,7 @@ public class fragment_music_player extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        username = ((MainActivity)getActivity()).username;
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_music_player, container, false);
         Bundle arguments = getArguments();
