@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
             android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:hint="Your Name" />
         <EditText
             android:id="@+id/edtUserReg"
@@ -37,6 +38,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
             android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:hint="UserName" />
 
         <EditText
@@ -45,6 +47,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
             android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:inputType="textPassword"
             android:hint="Password" />
 

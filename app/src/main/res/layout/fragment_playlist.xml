@@ -33,11 +33,9 @@
         android:background="#292929"
         android:fillViewport="true">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_playlist"
+        <ListView
+            android:id="@+id/listView_playlist"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp" />
+            android:layout_height="wrap_content" />
     </androidx.core.widget.NestedScrollView>
 </RelativeLayout>
