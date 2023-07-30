@@ -337,7 +337,7 @@ public class fragment_music_player extends Fragment {
         handler.removeCallbacks(updateSeekBar);
     }
     private void showDialog() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.BlackDialogTheme);
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.custom_playlist_dialog,null);
         alertDialogBuilder.setView(view);
