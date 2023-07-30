@@ -98,17 +98,16 @@
     <ImageButton
         android:id="@+id/btn_add_playlist"
         android:layout_width="wrap_content"
-        android:layout_height="19dp"
+        android:layout_height="115dp"
         android:layout_below="@id/image_music_thumbnail"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="1dp"
         android:layout_marginEnd="45dp"
-        android:layout_marginRight="-198dp"
-        android:layout_marginBottom="145dp"
-        android:layout_toLeftOf="@id/text_music_artist"
+        android:layout_marginBottom="98dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:srcCompat="@drawable/baseline_playlist_add_24" />
+
 
 </RelativeLayout>

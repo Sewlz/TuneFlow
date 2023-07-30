@@ -21,11 +21,17 @@ import java.util.ArrayList;
 import com.example.musicstreaming.Adapter.CustomHomeRecyclerView;
 import com.example.musicstreaming.Adapter.RecyclerInterface;
 import com.example.musicstreaming.Model.Music;
+import com.example.musicstreaming.Model.Playlist;
 import com.example.musicstreaming.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 /**
@@ -151,5 +157,4 @@ public class fragment_home extends Fragment implements RecyclerInterface {
         fragmentTransaction.addToBackStack(null); // Optional: Add to back stack if you want to navigate back
         fragmentTransaction.commit();
     }
-
 }
