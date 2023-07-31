@@ -371,9 +371,8 @@ public class fragment_music_player extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Playlist playlist = playlistArrayList.get(position);
-                showDeleteDialog(playlist.getPLAYLIST_ID());
-                playlistArrayList.remove(position);
-                adapter.notifyDataSetChanged();
+                showDeleteDialog(playlist.getPLAYLIST_ID(),position);
+
                 return true;
             }
         });
@@ -531,7 +530,7 @@ public class fragment_music_player extends Fragment {
                     }
                 });
     }
-    private void showDeleteDialog(Integer playlist_Id) {
+    private void showDeleteDialog(Integer playlist_Id, final int pos) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("Notification");
         alertDialogBuilder.setMessage("Are you sure you want to delete this playlist");
@@ -539,6 +538,7 @@ public class fragment_music_player extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deletePlaylist(playlist_Id);
+                playlistArrayList.remove(pos);
                 adapter.notifyDataSetChanged();
                 dialog.dismiss(); // Close the dialog
             }

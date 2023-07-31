@@ -12,7 +12,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -118,6 +121,7 @@ public class fragment_playlist extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_playlist, container, false);
 
@@ -138,7 +142,7 @@ public class fragment_playlist extends Fragment{
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 //delete method
                 Playlist playlist = playlistArrayList.get(position);
-                showDeleteDialog(playlist.getPLAYLIST_ID());
+                showDeleteDialog(playlist.getPLAYLIST_ID(),position);
                 return true;
             }
         });
@@ -173,7 +177,7 @@ public class fragment_playlist extends Fragment{
 
         // Create a Bundle to pass the data
         Bundle bundle = new Bundle();
-        bundle.putInt("id", playlistId); // Replace "KEY_DATA" with your desired key
+        bundle.putInt("id", playlistId);
 
         // Set the arguments to the destination fragment
         destinationFragment.setArguments(bundle);
@@ -181,7 +185,7 @@ public class fragment_playlist extends Fragment{
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frameMain, destinationFragment);
-        fragmentTransaction.addToBackStack(null); // Optional: Add to back stack if you want to navigate back
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
     private void getLastedID(PlaylistIdCallback callback) {
@@ -243,7 +247,7 @@ public class fragment_playlist extends Fragment{
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss(); // Close the dialog
+                dialog.dismiss();
             }
         });
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -262,13 +266,12 @@ public class fragment_playlist extends Fragment{
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 document.getReference().delete();
                             }
-                            adapter.notifyDataSetChanged();
                         }
                         else {}
                     }
                 });
     }
-    private void showDeleteDialog(Integer playlist_Id) {
+    private void showDeleteDialog(Integer playlist_Id, final int pos) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("Notification");
         alertDialogBuilder.setMessage("Are you sure you want to delete this playlist");
@@ -276,13 +279,15 @@ public class fragment_playlist extends Fragment{
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deletePlaylist(playlist_Id);
+                playlistArrayList.remove(pos);
+                adapter.notifyDataSetChanged();
                 dialog.dismiss(); // Close the dialog
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss(); // Close the dialog
+                dialog.dismiss();
             }
         });
         AlertDialog alertDialog = alertDialogBuilder.create();
