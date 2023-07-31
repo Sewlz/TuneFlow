@@ -43,50 +43,20 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gotham_bold"
                 android:padding="16dp"
-                android:text="Featured Releases"
+                android:text="Tracks"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_featured_playlists"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp" />
 
             <!-- New Releases Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/gotham_bold"
-                android:padding="16dp"
-                android:text="New Releases"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_new_releases"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
 
             <!-- Recommended Tracks Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/gotham_bold"
-                android:padding="16dp"
-                android:text="Recommended Tracks"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_recommended_tracks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
 
             <!-- ... Add more sections as needed ... -->
 
