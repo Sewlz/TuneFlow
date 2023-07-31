@@ -156,6 +156,7 @@ public class fragment_playlist extends Fragment{
 
     public void getPlaylistByUNM(String username) {
         CollectionReference searchRef = db.collection("playlist");
+        playlistArrayList.clear();
         searchRef.whereEqualTo("USERNAME", username)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
